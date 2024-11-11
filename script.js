@@ -187,12 +187,14 @@ function getRandomParticipant() {
 }
 
 // Update the displayQuestion function
+// Update displayQuestion function to check hearts before displaying compensation question
 function displayQuestion() {
     if (currentQuestionIndex >= questions.length) {
+        // Check if hearts are at 0 and compensation has not been used yet
         if (hearts <= 0 && !isCompensatedQuestion && !usedCompensation) {
-            showCompensationIntro();
+            showCompensationIntro();  // Show compensation intro only if hearts are 0 and unused
         } else {
-            endQuiz();
+            endQuiz();  // End the quiz if no compensation or hearts are still available
         }
         return;
     }
@@ -201,13 +203,31 @@ function displayQuestion() {
     questionEl.innerText = currentQuestion.question;
     choicesContainer.innerHTML = '';
 
-    // Hide the participant name initially
+    // Hide participant name initially
     randomParticipantEl.style.display = "none";
 
-    // Handle fake glitch question and reset interaction settings if needed
+    // Handle fake glitch question if specified
     if (currentQuestion.showFakeGlitch) {
         showFakeAnswerKey();
     }
+
+    // Check if it's a compensation question and only allow answering if hearts are 0
+    allowAnswering = currentQuestion.isCompensation && hearts <= 0;
+
+    // Generate answer choices
+    currentQuestion.choices.forEach((choice, index) => {
+        const choiceBtn = document.createElement('button');
+        choiceBtn.classList.add('choice');
+        choiceBtn.innerText = choice;
+        choiceBtn.addEventListener('click', () => {
+            if (allowAnswering || (hearts > 0 && !currentQuestion.isCompensation)) {
+                handleAnswer(index, choiceBtn);
+            }
+        });
+        choicesContainer.appendChild(choiceBtn);
+    });
+}
+
 
     // Allow answering if it's a compensation question and hearts are at zero
     allowAnswering = currentQuestion.isCompensation && hearts <= 0;
@@ -313,17 +333,16 @@ function handleAnswer(selectedIndex, choiceBtn) {
 
 // Compensation question logic
 function showCompensationIntro() {
-    if (hearts <= 0 && !usedCompensation) {
-        compensationIntro.style.display = "block"; // Show compensation question
+    if (hearts === 0 && !usedCompensation) {
+        compensationIntro.style.display = "block"; // Show compensation question intro
         setTimeout(() => {
             compensationIntro.style.display = "none"; // Hide after showing
-            currentQuestionIndex = questions.length - 1; // Set to the compensation question
-            displayQuestion(); // Show the compensation question
-            startTimer(); // Start the timer for the compensation question
+            currentQuestionIndex = questions.length - 1; // Go to the compensation question
+            displayQuestion(); // Display the compensation question
+            startTimer(); // Start timer for compensation question
         }, 1000);
     }
 }
-
 // Helper function to update all other choices to a specific text
 function updateChoices(text) {
     const allChoices = document.querySelectorAll('.choice');
