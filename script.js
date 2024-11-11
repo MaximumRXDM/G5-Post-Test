@@ -287,29 +287,6 @@ function handleAnswer(selectedIndex, choiceBtn) {
 
     const currentQuestion = questions[currentQuestionIndex];
 
-    // Special case for question 15 (index 14)
-    if (currentQuestionIndex === 14) {
-        if (selectedIndex === currentQuestion.correctAnswer) {
-            // Win question 15 with hearts
-            if (hearts > 1) {
-                markVictory(); // Show permanent victory message
-                displayVictoryGIF(true); // Display GIF permanently
-                return;
-            } else {
-                // If they have 1 or fewer hearts, move to compensation question
-                hearts = 0; // Set hearts to zero to trigger compensation logic
-                showCompensationIntro();
-                return;
-            }
-        } else {
-            // Lose question 15 with 1 or fewer hearts
-            hearts = 0;
-            updateHearts();
-            showCompensationIntro();
-            return;
-        }
-    }
-
     // Handle the compensation question
     if (currentQuestion.isCompensation) {
         if (selectedIndex === currentQuestion.correctAnswer) {
@@ -333,7 +310,6 @@ function handleAnswer(selectedIndex, choiceBtn) {
         markIncorrect(choiceBtn);
     }
 }
-
 
 
 // Compensation question logic
