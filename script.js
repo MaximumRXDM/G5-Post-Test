@@ -201,26 +201,26 @@ function displayQuestion() {
     questionEl.innerText = currentQuestion.question;
     choicesContainer.innerHTML = '';
 
-    // Initially hide the participant name
+    // Hide the participant name initially
     randomParticipantEl.style.display = "none";
 
-    // Check for glitch question and compensation question to reset interaction
+    // Handle fake glitch question and reset interaction settings if needed
     if (currentQuestion.showFakeGlitch) {
         showFakeAnswerKey();
     }
 
-    if (currentQuestion.isCompensation || currentQuestionIndex === 14) {  // Ensure question 15 and compensation are interactable
-        allowAnswering = true;
-    } else {
-        disableAnswering(); // Disable answering until timer is up
-    }
+    // Allow answering if it's a compensation question and hearts are at zero
+    allowAnswering = currentQuestion.isCompensation && hearts <= 0;
 
+    // Generate answer choices
     currentQuestion.choices.forEach((choice, index) => {
         const choiceBtn = document.createElement('button');
         choiceBtn.classList.add('choice');
         choiceBtn.innerText = choice;
         choiceBtn.addEventListener('click', () => {
-            if (allowAnswering) handleAnswer(index, choiceBtn);
+            if (allowAnswering || (hearts > 0 && !currentQuestion.isCompensation)) {
+                handleAnswer(index, choiceBtn);
+            }
         });
         choicesContainer.appendChild(choiceBtn);
     });
@@ -287,34 +287,29 @@ function enableAnswering() {
 
 // Handle when the answer is selected
 function handleAnswer(selectedIndex, choiceBtn) {
-    if (!allowAnswering) return; // Don't allow answering until time is up
-
     const currentQuestion = questions[currentQuestionIndex];
 
-    // Handle the compensation question
-    if (currentQuestion.isCompensation) {
+    if (currentQuestion.isCompensation && hearts <= 0) {
         if (selectedIndex === currentQuestion.correctAnswer) {
             choiceBtn.classList.add('correct');
             choiceBtn.innerText = "YOU WON!";
             updateChoices("ADDITIONAL 5 POINTS TO EVERYONE'S TEST");
-            displayVictoryGIF(false); // Display GIF temporarily (5 seconds)
+            displayVictoryGIF(false);
         } else {
             choiceBtn.classList.add('incorrect');
             choiceBtn.innerText = "YOU LOSE!";
             updateChoices("DEDUCTED 5 POINTS TO EVERYONE'S TEST");
-            displayVictoryGIF(false); // Display GIF temporarily (5 seconds)
+            displayVictoryGIF(false);
         }
         return;
     }
 
-    // Handle regular questions
     if (selectedIndex === currentQuestion.correctAnswer) {
         markCorrect();
     } else {
         markIncorrect(choiceBtn);
     }
 }
-
 
 // Compensation question logic
 function showCompensationIntro() {
