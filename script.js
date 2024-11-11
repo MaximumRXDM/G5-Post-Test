@@ -188,6 +188,7 @@ function getRandomParticipant() {
 
 // Update the displayQuestion function
 // Update displayQuestion function to check hearts before displaying compensation question
+// Update displayQuestion function to check hearts before displaying compensation question
 function displayQuestion() {
     if (currentQuestionIndex >= questions.length) {
         // Check if hearts are at 0 and compensation has not been used yet
@@ -227,26 +228,6 @@ function displayQuestion() {
         choicesContainer.appendChild(choiceBtn);
     });
 }
-
-
-    // Allow answering if it's a compensation question and hearts are at zero
-    allowAnswering = currentQuestion.isCompensation && hearts <= 0;
-
-    // Generate answer choices
-    currentQuestion.choices.forEach((choice, index) => {
-        const choiceBtn = document.createElement('button');
-        choiceBtn.classList.add('choice');
-        choiceBtn.innerText = choice;
-        choiceBtn.addEventListener('click', () => {
-            if (allowAnswering || (hearts > 0 && !currentQuestion.isCompensation)) {
-                handleAnswer(index, choiceBtn);
-            }
-        });
-        choicesContainer.appendChild(choiceBtn);
-    });
-}
-
-
 // Show Fake Answer Key
 function showFakeAnswerKey() {
     const fakeAnswerKey = document.createElement('div');
