@@ -204,9 +204,15 @@ function displayQuestion() {
     // Initially hide the participant name
     randomParticipantEl.style.display = "none";
 
-    // Show fake answer key if it's a glitch question
+    // Check for glitch question and compensation question to reset interaction
     if (currentQuestion.showFakeGlitch) {
         showFakeAnswerKey();
+    }
+
+    if (currentQuestion.isCompensation || currentQuestionIndex === 14) {  // Ensure question 15 and compensation are interactable
+        allowAnswering = true;
+    } else {
+        disableAnswering(); // Disable answering until timer is up
     }
 
     currentQuestion.choices.forEach((choice, index) => {
@@ -218,8 +224,6 @@ function displayQuestion() {
         });
         choicesContainer.appendChild(choiceBtn);
     });
-
-    disableAnswering(); // Disable answering until timer is up
 }
 
 
