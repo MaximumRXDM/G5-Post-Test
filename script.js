@@ -429,3 +429,6 @@ function displayVictoryGIF(isPermanent) {
         }, 5000);
     }
 }
+
+Now theyre making me answer the compensation question even tho I have 1 or more hearts
+Compensation question is only for those who got 0 heart
